@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import download from 'download';
 
 import { HttpsProxyAgent } from 'https-proxy-agent';
 // import { stream } from 'stream/promises';
@@ -25,15 +26,44 @@ const downloadJson = async (what) => {
     }
 }
 
+import {HttpsProxyAgent as HP} from 'hpagent';
+
+
 const downloadBlob = (async (url, fileName) => {
-    const res = await fetch(url, {
-        method: 'GET',
-        "redirect": "follow",
-        "agent": proxyAgent(),
+    const stream = download(url, process.env.https_proxy ? {
+        agent: {
+            https: new HP({
+                proxy: process.env.https_proxy
+            })
+        }
+    } : {});
+
+    stream.on('data', (chunk) => {
+        totalSize -= chunk.length;
+    });
+    stream.on('downloadProgress', (progress) => {
+        const percent = Math.round(progress.percent * 100);
+        if (percent > 0 && (percent % 10 === 0 && percent !== stream._lastLoggedPercent)) {
+            // console.log(new Date(), `progress for ${url}: ${Math.round(progress.percent * 100)}%`);
+            // if (progress == 100) console.log(new Date(), 'completed')
+            console.log(new Date(), `${Math.round(totalSize / 1024 / 1024)} mb left`);
+            stream._lastLoggedPercent = percent;
+        }
+        if (percent === 100) {
+            if (totalFiles >= 0)console.log(new Date(), (--totalFiles), "blobs to go");
+        }
     });
 
-    const buffer = await res.buffer();
-    fs.writeFileSync(fileName, buffer);
+    stream.pipe(fs.createWriteStream(fileName));
+
+    // const res = await fetch(url, {
+    //     method: 'GET',
+    //     "redirect": "follow",
+    //     "agent": proxyAgent(),
+    // });
+
+    // const buffer = await res.buffer();
+    // fs.writeFileSync(fileName, buffer);
 });
 
 
@@ -54,6 +84,9 @@ const version = process.argv[3];
 
 const manifestUrl = `https://registry.ollama.ai/v2/library/${modelName}/manifests/${version}`;
 
+let totalSize = 0;
+let totalFiles = 0;
+
 const main = async () => {
     console.log(new Date(), `Ollama Model Downloader v0.1beta`)
     console.log(new Date(), `Downloading ${modelName}:${version}`)
@@ -65,16 +98,17 @@ const main = async () => {
     console.log(new Date(), "Manifest for", modelName +":" + version, "saved in", `./models/manifests/registry.ollama.ai/library/${modelName}/${version}`)
     console.log(new Date(), manifest)
 
- 
+    totalFiles = manifest.layers.length;
+     console.log(new Date(), `${totalFiles} blobs to download`);
     for (const layer of manifest.layers) {
+        totalSize += layer.size;
         const fileName = `./models/blobs/sha256-${layer.digest.split(':')[1]}`;
         const fileUrl = `https://registry.ollama.ai/v2/library/${modelName}/blobs/${layer.digest}`;
 
-        console.log(new Date(), `Downloading ${fileUrl}... (${Math.round(layer.size / 1024) } kb)`);
+        // console.log(new Date(), `Downloading ${fileUrl}... (${Math.round(layer.size / 1024) } kb)`);
         await downloadBlob(fileUrl, fileName);
-        console.log(new Date(), `Saved in ${fileName}`);
+        // console.log(new Date(), `Saved in ${fileName}`);
     }
-    console.log(new Date(), `Done`);
 }
 
 main()
