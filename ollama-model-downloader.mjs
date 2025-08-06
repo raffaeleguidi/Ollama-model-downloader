@@ -37,11 +37,7 @@ const downloadBlob = (async (url, fileName) => {
 });
 
 
-
-
-
 // import crypto from 'crypto';
-
 
 // async function computeHash(filepath) {
 //   const input = fs.createReadStream(filepath);
@@ -57,8 +53,6 @@ const modelName = process.argv[2];
 const version = process.argv[3];
 
 const manifestUrl = `https://registry.ollama.ai/v2/library/${modelName}/manifests/${version}`;
-
- 
 
 const main = async () => {
     console.log(new Date(), `Ollama Model Downloader v0.1beta`)
@@ -76,7 +70,7 @@ const main = async () => {
         const fileName = `./models/blobs/sha256-${layer.digest.split(':')[1]}`;
         const fileUrl = `https://registry.ollama.ai/v2/library/${modelName}/blobs/${layer.digest}`;
 
-        console.log(new Date(), `Downloading ${fileUrl}... (${layer.size} bytes)`);
+        console.log(new Date(), `Downloading ${fileUrl}... (${Math.round(layer.size / 1024) } kb)`);
         await downloadBlob(fileUrl, fileName);
         console.log(new Date(), `Saved in ${fileName}`);
     }
