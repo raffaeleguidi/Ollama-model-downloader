@@ -50,7 +50,7 @@ const downloadBlob = (async (url, fileName) => {
             stream._lastLoggedPercent = percent;
         }
         if (percent === 100) {
-            if (totalFiles >= 0)console.log(new Date(), (--totalFiles), "blobs to go");
+            if (totalFiles > 0)console.log(new Date(), (--totalFiles), "blobs to go");
         }
     });
 
