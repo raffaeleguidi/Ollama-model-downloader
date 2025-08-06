@@ -1,17 +1,22 @@
 usage:
 
+```
 install nodejs
 clone the repo
 npm install in the project folder
+```
 
 example:
 
+```
 node ollama-model-downloader.mjs llama3.2 1b
+```
 
 and then move the blobs in ./models/blobs to $HOME/.ollama/models/blobs
 
 output:
 
+```
 raffaele@localhost>node ollama-model-downloader.mjs llama3.2 1b
 2025-08-06T20:41:31.659Z Ollama Model Downloader v0.1beta
 2025-08-06T20:41:31.664Z Downloading llama3.2:1b
@@ -67,3 +72,5 @@ raffaele@localhost>node ollama-model-downloader.mjs llama3.2 1b
 2025-08-06T20:43:26.806Z 6 mb left
 2025-08-06T20:43:26.806Z 0 blobs to go
 raffaele@localhost>_
+```
+
