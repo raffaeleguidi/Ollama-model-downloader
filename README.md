@@ -1,15 +1,9 @@
+# Ollama-model-downloader
+
 usage:
 
 ```
-install nodejs
-clone the repo
-npm install in the project folder
-```
-
-example:
-
-```
-node ollama-model-downloader.mjs llama3.2 1b
+ollama-model-downloader-macos llama3.2 1b
 ```
 
 and then move the blobs in ./models/blobs to $HOME/.ollama/models/blobs
@@ -17,7 +11,7 @@ and then move the blobs in ./models/blobs to $HOME/.ollama/models/blobs
 output:
 
 ```
-raffaele@localhost>node ollama-model-downloader.mjs llama3.2 1b
+raffaele@localhost>ollama-model-downloader-macos llama3.2 1b
 2025-08-06T20:41:31.659Z Ollama Model Downloader v0.1beta
 2025-08-06T20:41:31.664Z Downloading llama3.2:1b
 2025-08-06T20:41:32.055Z Manifest for llama3.2:1b saved in ./models/manifests/registry.ollama.ai/library/llama3.2/1b
@@ -72,5 +66,19 @@ raffaele@localhost>node ollama-model-downloader.mjs llama3.2 1b
 2025-08-06T20:43:26.806Z 6 mb left
 2025-08-06T20:43:26.806Z 0 blobs to go
 raffaele@localhost>_
+```
+
+
+packaged with yao-pkg:
+
+```
+npm run package
+
+> ollama-model-downloader@1.0.0 pack
+> pkg ollama-model-downloader.js
+
+> pkg@6.6.0
+> Targets not specified. Assuming:
+  node22-linux-x64, node22-macos-x64, node22-win-x64
 ```
 
